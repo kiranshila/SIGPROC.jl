@@ -44,5 +44,6 @@ fb.data[Samp = At(99)] |> plot
 We can also combine this indexing with Julia's builtin array operations such as looking at the time-averaged slice of spectrum. In this window, we get a nice look at the [21-centimeter line](https://en.wikipedia.org/wiki/Hydrogen_line)
 
 ```@example examples
+using Statistics
 mean(fb.data,dims=Samp)[Freq = 1419..1422] |> plot
 ```
