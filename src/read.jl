@@ -2,9 +2,10 @@
 using Mmap
 using DimensionalData
 using DimensionalData.Dimensions
+using Printf
 
 @dim Samp YDim "Sample"
-@dim Freq XDim "Frequency"
+@dim Freq XDim "Frequency (MHz)"
 
 @doc "The frequency dimension of `Filterbank` data in MHz" Freq
 @doc "The sample dimension of `Filterbank` data" Samp
@@ -59,8 +60,7 @@ const HEADER_TYPES = Dict("filename" => String,
                           "start_sample" => :int,
                           "end_sample" => :int)
 
-const BIT_TYPE = Dict(1 => UInt8, 2 => UInt8, 4 => UInt8, 8 => UInt8, 16 => UInt16,
-                      32 => UInt32)
+const BIT_TYPE = Dict(1 => UInt8, 2 => UInt8, 4 => UInt8, 8 => UInt8, 16 => UInt16,32 => Float32)
 
 function read_next_type(type, bytes, ptr)
     data, = reinterpret(type, @view bytes[ptr:(ptr + sizeof(type) - 1)])
@@ -101,6 +101,20 @@ struct Filterbank
     headers::Dict
 end
 
+function Base.show(io::IO,fb::Filterbank)
+    println(io,"A Filterbank file with $(size(fb.data)[1]) time samples")
+    println(io,"----------")
+    for (k,v) in fb.headers
+        if v isa Integer
+            @printf("%-20s: %d\n",k,v)
+        elseif v isa AbstractFloat
+            @printf("%-20s: %f\n",k,v)
+        else
+            @printf("%-20s: %s\n",k,v)
+        end
+    end
+end
+
 """
     Filterbank("file.fil")
 
@@ -139,14 +153,19 @@ function Filterbank(filename::String; start=1, stop=nothing, header_int=UInt32,
     foff = headers["foff"]
     # Read the remaining chunk
     bytes_per_sample = nchans * nbits ÷ 8
-    nsamps = length(data_bytes) ÷ bytes_per_sample
+    nsamps = (length(data_bytes) ÷ bytes_per_sample) - 1
     if isnothing(stop)
         stop = nsamps
+    else
+        @assert stop <= nsamps
     end
     # Preallocate data block
     samps = Samp(start:stop)
     freqs = Freq(range(; start=fch1, length=nchans, step=foff))
     data = DimArray(zeros(BIT_TYPE[nbits], length(samps), length(freqs)), (samps, freqs))
+    # Move start pointer
+
+    # Read the data
     for i in start:stop
         ptr += bytes_per_sample
         data[Samp(At(i))] = reinterpret(BIT_TYPE[nbits],

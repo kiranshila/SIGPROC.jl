@@ -9,6 +9,7 @@ Documentation for [SIGPROC](https://github.com/kiranshila/SIGPROC.jl).
 ```@index
 ```
 
-```@autodocs
-Modules = [SIGPROC]
+```@contents
+Pages = ["examples.md","api.md"]
+Depth = 3
 ```
