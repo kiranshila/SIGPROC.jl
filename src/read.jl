@@ -126,7 +126,7 @@ Read a SIGPROC .fil file into a `Filterbank`.
 
 # Optional Arguments
 - `start::Int`: The starting time sample to read from (inclusive)
-- `stop::Int`: The stopping time sampel to read to (inclusive)
+- `stop::Int`: The stopping time sample to read to (inclusive)
 - `header_int::DataType`: The type of header integers, defaults to UInt32
 - `header_float::DataType`: The type of header flots, defaults to Float64
 """
