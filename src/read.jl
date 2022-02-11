@@ -125,7 +125,6 @@ Read a SIGPROC .fil file into a `Filterbank`.
 - `filename::String`:  The name of the file
 
 # Optional Arguments
-- `accuracy::Symbol=:full`: Sets the accuracy level of `:full` or `:reduced`
 - `start::Int`: The starting time sample to read from (inclusive)
 - `stop::Int`: The stopping time sampel to read to (inclusive)
 - `header_int::DataType`: The type of header integers, defaults to UInt32
