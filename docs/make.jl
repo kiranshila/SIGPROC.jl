@@ -1,6 +1,8 @@
 using SIGPROC
 using Documenter
 
+ENV["GKSwstype"] = "100"
+
 DocMeta.setdocmeta!(SIGPROC, :DocTestSetup, :(using SIGPROC); recursive=true)
 
 makedocs(;

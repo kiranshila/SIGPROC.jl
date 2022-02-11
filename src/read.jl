@@ -60,7 +60,8 @@ const HEADER_TYPES = Dict("filename" => String,
                           "start_sample" => :int,
                           "end_sample" => :int)
 
-const BIT_TYPE = Dict(1 => UInt8, 2 => UInt8, 4 => UInt8, 8 => UInt8, 16 => UInt16,32 => Float32)
+const BIT_TYPE = Dict(1 => UInt8, 2 => UInt8, 4 => UInt8, 8 => UInt8, 16 => UInt16,
+                      32 => Float32)
 
 function read_next_type(type, bytes, ptr)
     data, = reinterpret(type, @view bytes[ptr:(ptr + sizeof(type) - 1)])
@@ -101,16 +102,16 @@ struct Filterbank
     headers::Dict
 end
 
-function Base.show(io::IO,fb::Filterbank)
-    println(io,"A Filterbank file with $(size(fb.data)[1]) time samples")
-    println(io,"----------")
-    for (k,v) in fb.headers
+function Base.show(io::IO, fb::Filterbank)
+    println(io, "A Filterbank file with $(size(fb.data)[1]) time samples")
+    println(io, "----------")
+    for (k, v) in fb.headers
         if v isa Integer
-            @printf("%-20s: %d\n",k,v)
+            @printf(io, "%-20s: %d\n", k, v)
         elseif v isa AbstractFloat
-            @printf("%-20s: %f\n",k,v)
-        else
-            @printf("%-20s: %s\n",k,v)
+            @printf(io, "%-20s: %f\n", k, v)
+        elseif v isa AbstractString
+            @printf(io, "%-20s: %s\n", k, v)
         end
     end
 end
@@ -164,15 +165,15 @@ function Filterbank(filename::String; start=1, stop=nothing, header_int=UInt32,
     freqs = Freq(range(; start=fch1, length=nchans, step=foff))
     data = DimArray(zeros(BIT_TYPE[nbits], length(samps), length(freqs)), (samps, freqs))
     # Move start pointer
-
+    ptr += (bytes_per_sample * (start - 1))
     # Read the data
     for i in start:stop
-        ptr += bytes_per_sample
         data[Samp(At(i))] = reinterpret(BIT_TYPE[nbits],
                                         @view f[ptr:(ptr + bytes_per_sample - 1)])
+        ptr += bytes_per_sample
     end
 
-    return Filterbank(data,headers)
+    return Filterbank(data, headers)
 end
 
 export Filterbank, Samp, Freq
