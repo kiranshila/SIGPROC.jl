@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:004661dcf5831c25e020385feb26c38c528fde0b0bf90607641ff9ae363c1257
-size 154
+function snr(data,boxcar_width)
+    first_quant = quantile(data |> vec, 0.25)
+    noise_std = std(filter(x->x<first_quant,data))
+    data ./ noise_std
+end

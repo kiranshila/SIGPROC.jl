@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fe1a19deeb970f587d15654925762ec78dfc820c872c2e0e43076bf51113505e
-size 227
+```@meta
+CurrentModule = RadioTransients
+```
+
+# RadioTransients
+
+Documentation for [RadioTransients](https://github.com/kiranshila/RadioTransients.jl).
+
+```@index
+```
+
+```@contents
+Pages = ["examples.md","api.md"]
+Depth = 3
+```

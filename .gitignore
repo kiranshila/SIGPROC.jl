@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9fd75557026f375b273c3027e30f7e705a4fb6975fbcdd8a6cc70c841c0986a0
-size 57
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+/Manifest.toml
+/docs/build/

@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e1607a8959ad7907cf9be69fb02830e2a176699c1c5e8b2399767fead9627064
-size 182
+using RadioTransients, Plots, Statistics, DimensionalData
+
+frb = Filterbank("candidate_ovro_20200428.fil")
+
+chunk = frb.data
+waterfall(chunk)
+
+dedisperse(frb,333.3).data |> waterfall
