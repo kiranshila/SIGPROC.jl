@@ -1,12 +1,3 @@
-# RadioTransients
-
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://kiranshila.github.io/RadioTransients.jl/dev)
-[![Build Status](https://github.com/kiranshila/RadioTransients.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/kiranshila/RadioTransients.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/kiranshila/RadioTransients.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/kiranshila/RadioTransients.jl)
-
-RadioTransients.jl is a Julia package for working with time-domain radio astronomy data. This includes working with the [sigproc](https://sigproc.sourceforge.net/) filterbank data file format, dedispersion algorithms, etc. WIP.
-
-### TODO
-- Handle <8 bit filterbank data
-- Handle filterbank endianness
-- Write out filterbank data
+version https://git-lfs.github.com/spec/v1
+oid sha256:df11b39f3c78d4612b1bc01b1778e13eeabc52ce6e68354ca8c1d7305b2614e1
+size 816
