@@ -32,7 +32,7 @@ using RecipesBase, Statistics
     # upper
     @series begin
         subplot := 1
-        y := mean(data,dims=Samp)
+        y := mean(data,dims=Ti)
     end
 
     # right histogram

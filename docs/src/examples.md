@@ -16,7 +16,7 @@ Now, we can read it into a `Filterbank`. By default, it will read all the time s
 fb = Filterbank(filename)
 ```
 
-The data is stored as a `DimArray` from the [DimensionalData](https://github.com/rafaqz/DimensionalData.jl) package in the `data` attribute. This provides zero-cost abstractions for named indexing and fast index lookups. Our filterbank data has axes `Freq` and `Samp`, which we can use for indexing.
+The data is stored as a `DimArray` from the [DimensionalData](https://github.com/rafaqz/DimensionalData.jl) package in the `data` attribute. This provides zero-cost abstractions for named indexing and fast index lookups. Our filterbank data has axes `Freq` and `Ti`, which we can use for indexing.
 
 ```@example examples
 fb.data

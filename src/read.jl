@@ -7,7 +7,6 @@ using Printf
 @dim Freq XDim "Frequency (MHz)"
 
 @doc "The frequency dimension of `Filterbank` data in MHz" Freq
-@doc "The sample dimension of `Filterbank` data" Samp
 
 const HEADER_VALUE_TYPE = Union{String,Real}
 
@@ -176,4 +175,4 @@ function Filterbank(filename::String; start=1, stop=nothing, header_int=UInt32,
     return Filterbank(data, headers)
 end
 
-export Filterbank, Samp, Freq
+export Filterbank, Freq
