@@ -1,7 +1,7 @@
 # Examples
 
 ```@setup examples
-using SIGPROC, IntervalSets, DimensionalData
+using RadioTransients, IntervalSets, DimensionalData
 ```
 
 First, let's grab some filterbank data, we can find one from [Berkeley's SETI Research Center](http://breakthroughinitiatives.org/opendatasearch). Julia's `download` function will grab the file from a URL and give us the filename back.
@@ -35,15 +35,15 @@ We can use this indexing to perform all sorts of analysis. Here we are using `..
 fb.data[Freq = 1350..1450] |> heatmap
 ```
 
-We can also index by sample to get the nth integration
+We can also index by time to get the nth integration
 
 ```@example examples
-fb.data[Samp = At(99)] |> plot
+fb.data[Ti = 99] |> plot
 ```
 
 We can also combine this indexing with Julia's builtin array operations such as looking at the time-averaged slice of spectrum. In this window, we get a nice look at the [21-centimeter line](https://en.wikipedia.org/wiki/Hydrogen_line)
 
 ```@example examples
 using Statistics
-mean(fb.data,dims=Samp)[Freq = 1419..1422] |> plot
+dropdims(mean(fb.data,dims=Ti)[Freq = 1419..1422],dims=Ti) |> plot
 ```

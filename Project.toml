@@ -1,12 +1,24 @@
-name = "SIGPROC"
+name = "RadioTransients"
 uuid = "dc4e74f6-7eb3-495c-9715-1b3901ea274a"
 authors = ["Kiran Shila <me@kiranshila.com> and contributors"]
 version = "0.1.0"
 
 [deps]
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
 Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
+NLopt = "76087f3c-5699-56af-9a33-bf431cd00edd"
+Optim = "429524aa-4258-5aef-a3af-852621145aeb"
+PhysicalConstants = "5ad8b20f-a522-5ce9-bfc9-ddf1d5bda6ab"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
+UnitfulAstro = "6112ee07-acf9-5e0f-b108-d242c714bf9f"
+Yota = "cd998857-8626-517d-b929-70ad188a48f0"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 DimensionalData = "0.20"

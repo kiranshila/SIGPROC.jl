@@ -53,6 +53,6 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using SIGPROC
-            DocMeta.setdocmeta!(SIGPROC, :DocTestSetup, :(using SIGPROC); recursive=true)
-            doctest(SIGPROC)'
+            using RadioTransients
+            DocMeta.setdocmeta!(RadioTransients, :DocTestSetup, :(using RadioTransients); recursive=true)
+            doctest(RadioTransients)'

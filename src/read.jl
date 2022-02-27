@@ -4,7 +4,6 @@ using DimensionalData
 using DimensionalData.Dimensions
 using Printf
 
-@dim Samp YDim "Sample"
 @dim Freq XDim "Frequency (MHz)"
 
 @doc "The frequency dimension of `Filterbank` data in MHz" Freq
@@ -58,7 +57,8 @@ const HEADER_TYPES = Dict("filename" => String,
                           "MJD_second" => :float,
                           "MJD_start" => :int,
                           "start_sample" => :int,
-                          "end_sample" => :int)
+                          "end_sample" => :int,
+                          "cand_location" => :int)
 
 const BIT_TYPE = Dict(1 => UInt8, 2 => UInt8, 4 => UInt8, 8 => UInt8, 16 => UInt16,
                       32 => Float32)
@@ -94,8 +94,8 @@ end
 The datastructure that holds the the Filterbank file.
 
 # Fields
--`data`: The data as a `DimArray` with dimensions `Samp` and `Freq`
--`headers`: The dictionary of header information
+- `data`: The data as a `DimArray` with dimensions `Samp` and `Freq`
+- `headers`: The dictionary of header information
 """
 struct Filterbank
     data::DimArray
@@ -151,6 +151,7 @@ function Filterbank(filename::String; start=1, stop=nothing, header_int=UInt32,
     nbits = headers["nbits"]
     fch1 = headers["fch1"]
     foff = headers["foff"]
+    tsamp = headers["tsamp"]
     # Read the remaining chunk
     bytes_per_sample = nchans * nbits ÷ 8
     nsamps = (length(data_bytes) ÷ bytes_per_sample) - 1
@@ -160,14 +161,14 @@ function Filterbank(filename::String; start=1, stop=nothing, header_int=UInt32,
         @assert stop <= nsamps
     end
     # Preallocate data block
-    samps = Samp(start:stop)
+    time = Ti(range(start=0,step=tsamp,length=nsamps))
     freqs = Freq(range(; start=fch1, length=nchans, step=foff))
-    data = DimArray(zeros(BIT_TYPE[nbits], length(samps), length(freqs)), (samps, freqs))
+    data = DimArray(zeros(BIT_TYPE[nbits], length(time), length(freqs)), (time, freqs))
     # Move start pointer
     ptr += (bytes_per_sample * (start - 1))
     # Read the data
     for i in start:stop
-        data[Samp(At(i))] = reinterpret(BIT_TYPE[nbits],
+        data[Ti = i] = reinterpret(BIT_TYPE[nbits],
                                         @view f[ptr:(ptr + bytes_per_sample - 1)])
         ptr += bytes_per_sample
     end

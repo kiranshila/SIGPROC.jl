@@ -1,6 +1,6 @@
-using SIGPROC
+using RadioTransients
 using Test
 
-@testset "SIGPROC.jl" begin
+@testset "RadioTransients.jl" begin
     # Write your tests here.
 end
