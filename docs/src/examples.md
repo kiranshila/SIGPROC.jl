@@ -52,35 +52,22 @@ dropdims(mean(fb.data,dims=Ti)[Freq = 1419..1422],dims=Ti) |> plot
 
 ## Dedispersing
 
-Let's look at some real data now! Here, we'll use [FRB121102 data from the Lovell Telescope](https://zenodo.org/record/3974768)
+Let's look at some "realistic" data!
 
-First we'll grab the filterbank (included in this documentation)
+First we'll generate a fake dispersed pulse with a dispersion measure (DM) of 800 pc/cc over a frequency range of 1200-1500 MHz. We'll leave the other settings as is.
 
 ```@example examples
-frb = Filterbank("test/57781_65987_J0532+3305_000010.fil")
+frb = pulse(800,1200,1500)
 ```
 
-There's a bit too much data here to look at all the dynamic spectra, so we'll look at the first three seconds
+Looking at the waterfall, we can see the frequency-integrated flux is spread out.
+
+```@example examples
+waterfall(frb)
+```
+
+We can apply the dedispersion transformation to get the real pulse shape
 
 ```@example
-waterfall(frb.data[Ti(Between(0,3))])
+waterfall(dedisperse(frb,800))
 ```
-There is a lot of RFI, but hidden in this data is a fast radio burst! According to the paper, the FRB arrives at 2.456s - they usually last only a few ms.
-
-```@example
-waterfall(frb.data[Ti(Between(2.256,3.056))])
-```
-
-Now we can see it a little better, showcasing the "sad trombone" from the dispersion. We can correct for this using `dedisperse`. The dispersion measure (DM) for this particular FRB (FRB 121102) is 562.1 pc/cc.
-
-```@example
-dedisperse(frb,562.1).data[Ti(Between(2.256,3.056))] |> waterfall
-```
-
-Now we see the high SNR spike at the arrival time indicated. Let's zoom in!
-
-```@example
-dedisperse(frb,562.1).data[Ti(Between(2.306,2.606))] |> waterfall
-```
-
-We cam certainly see that the pulse is clearly there! We could then do more analysis on structure, SNR, etc.
