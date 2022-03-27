@@ -3,7 +3,7 @@
 ## Reading Filterbanks
 
 ```@setup examples
-using RadioTransients, IntervalSets, DimensionalData
+using SIGPROC, IntervalSets, DimensionalData
 ```
 
 First, let's grab some filterbank data, we can find one from [Berkeley's SETI Research Center](http://breakthroughinitiatives.org/opendatasearch). Julia's `download` function will grab the file from a URL and give us the filename back.
@@ -48,26 +48,4 @@ We can also combine this indexing with Julia's builtin array operations such as 
 ```@example examples
 using Statistics
 dropdims(mean(fb.data,dims=Ti)[Freq = 1419..1422],dims=Ti) |> plot
-```
-
-## Dedispersing
-
-Let's look at some "realistic" data!
-
-First we'll generate a fake dispersed pulse with a dispersion measure (DM) of 800 pc/cc over a frequency range of 1200-1500 MHz. We'll leave the other settings as is.
-
-```@example examples
-frb = pulse(800,1200,1500)
-```
-
-Looking at the waterfall, we can see the frequency-integrated flux is spread out.
-
-```@example examples
-waterfall(frb)
-```
-
-We can apply the dedispersion transformation to get the real pulse shape
-
-```@example
-waterfall(dedisperse(frb,800))
 ```

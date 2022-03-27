@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = RadioTransients
+CurrentModule = SIGPROC
 ```
 
-# RadioTransients
+# SIGPROC
 
-Documentation for [RadioTransients](https://github.com/kiranshila/RadioTransients.jl).
+Documentation for [SIGPROC](https://github.com/kiranshila/SIGPROC.jl).
 
 ```@index
 ```

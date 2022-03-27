@@ -4,7 +4,7 @@
 ```
 
 ```@autodocs
-Modules = [RadioTransients]
+Modules = [SIGPROC]
 Order = [:function,:type]
 Private = false
 ```

@@ -1,9 +1,9 @@
 using IntervalSets, DimensionalData
 
-gaussian(t, t₀, w) = exp(-((t - t₀) / w)^2)
+@inline gaussian(t, t₀, w) = exp(-((t - t₀) / w)^2)
 
 """
-pulse(DM,f_low,f_high)
+fake_pulse(DM,f_low,f_high)
 
 Generates a `Filterbank` file corresponding to a fake pulse of dispersion measure `DM`
 from frequencies `f_low` to `f_high` (MHz).
@@ -18,30 +18,51 @@ from frequencies `f_low` to `f_high` (MHz).
 - `start`: Index of start of pulse
 - `dtype`: Data type of data
 """
-function pulse(DM, f_low, f_high;
-                channels=1024,
-                samples=2048,
-                t_step=1e-3,
-                w=8,
-                A=2,
-                α=4,
-                start=samples/2,
-                dtype = Float16)
-    freqs = Freq(range(; start=f_high, stop=f_low, length=channels))
-    time = Ti(range(; start=0, step=t_step, length=samples))
+function fake_pulse(DM, f_low, f_high;
+                    channels=1024,
+                    samples=1024,
+                    t_step=1e-3,
+                    w=8,
+                    A=2,
+                    α=4,
+                    start=samples / 2,
+                    dtype=Float32)
+    @assert start < samples "Starting sample must be less than the number of samples"
 
-    dyn_spec = rand(dtype,time, freqs)
+    freqs = range(; start=f_high, stop=f_low, length=channels)
+    time = range(; start=0, step=t_step, length=samples)
 
     t_start = start * t_step
 
-    for j in 1:samples, i in 1:channels
-        t = time[j]
-        f = freqs[i]
-        t_f = t_start + Δt(DM,f,f_high)
-        dyn_spec[j,i] += A * (f / f_high)^α * gaussian(t,t_f,w*t_step)
-    end
+    shifts = @. Δt(DM, freqs', f_high)
+    dyn_spec = rand(dtype, samples, channels)
+    dyn_spec .+= @. gaussian(time, t_start + shifts, w * t_step) * A * (freqs' / f_high)^α
 
-    return Filterbank(dyn_spec, Dict("tsamp" => t_step))
+    return Filterbank(DimArray(dyn_spec, (Ti(time), Freq(freqs))), Dict("tsamp" => t_step))
 end
 
-export pulse
+function fake_pulse!(dyn_spec, DM, f_low, f_high;
+                     t_step=1e-3,
+                     w=8,
+                     A=2,
+                     α=4,
+                     start=nothing,
+                     dtype=Float32)
+    samples, channels = size(dyn_spec)
+
+    freqs = range(; start=f_high, stop=f_low, length=channels)
+    time = range(; start=0, step=t_step, length=samples)
+
+    if isnothing(start)
+        start = samples ÷ 2
+    end
+
+    t_start = start * t_step
+
+    shifts = @. Δt(DM, freqs', f_high)
+    dyn_spec .= rand(dtype, samples, channels)
+    return dyn_spec .+= @. gaussian(time, t_start + shifts, w * t_step) * A *
+                           (freqs' / f_high)^α
+end
+
+export fake_pulse, fake_pulse!

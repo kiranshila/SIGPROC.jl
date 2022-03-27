@@ -1,7 +1,6 @@
-module RadioTransients
+module SIGPROC
 
 include("read.jl")
-include("dispersion.jl")
 include("fake.jl")
 include("plotting.jl")
 
