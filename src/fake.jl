@@ -2,6 +2,15 @@ using IntervalSets, DimensionalData
 
 @inline gaussian(t, t₀, w) = exp(-((t - t₀) / w)^2)
 
+const KDM = 4.148808e3 # MHz^2 pc^-1 cm^3 s
+
+"""
+Δt(DM, ν₁, ν₂)
+Calculates the time delay corresponding to a dispersed pulse at dispersion measure `DM` in pc/cc between
+frequencies `ν₁` and `ν₂`
+"""
+Δt(DM, ν₁, ν₂) = KDM * DM * (ν₁^-2 - ν₂^-2)
+
 """
 fake_pulse(DM,f_low,f_high)
 
@@ -36,7 +45,12 @@ function fake_pulse(DM, f_low, f_high;
 
     shifts = @. Δt(DM, freqs', f_high)
     dyn_spec = rand(dtype, samples, channels)
-    dyn_spec .+= @. gaussian(time, t_start + shifts, w * t_step) * A * (freqs' / f_high)^α
+    raw_pulse = @. gaussian(time, t_start + shifts, w * t_step) * A * (freqs' / f_high)^α
+    if dtype <: Integer
+        dyn_spec += round.(dtype,raw_pulse)
+    else
+        dyn_spec += raw_pulse
+    end
 
     return Filterbank(DimArray(dyn_spec, (Ti(time), Freq(freqs))), Dict("tsamp" => t_step))
 end
