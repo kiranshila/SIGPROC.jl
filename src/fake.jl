@@ -20,63 +20,66 @@ from frequencies `f_low` to `f_high` (MHz).
 # Optional Arguments
 - `channels`: Number of frequency channels
 - `samples`: Number of time samples
-- 't_step`: The time step (s) represented by one sample
+- 'δt`: The time step (s) represented by one sample
 - `w`: Width of the pulse in time samples
 - `A`: Amplitude of pulse in SNR
 - `α`: Spectral index, i.e. attenuation of pulse over frequency
 - `start`: Index of start of pulse
+- `noise_floor`: Value of the top of the noise floor. This is 1 for `dtype` of Floats and one tenth `typemax` for integers by default.
 - `dtype`: Data type of data
 """
 function fake_pulse(DM, f_low, f_high;
                     channels=1024,
                     samples=1024,
-                    t_step=1e-3,
+                    δt=1e-3,
                     w=8,
                     A=2,
                     α=4,
-                    start=samples / 2,
-                    dtype=Float32)
+                    start=1,
+                    noise_floor::Union{T,Nothing}=nothing,
+                    dtype::Type{T}=Float32) where {T}
     @assert start < samples "Starting sample must be less than the number of samples"
 
+    if isnothing(noise_floor)
+        if dtype <: Integer
+            # Default to one tenth the range of the integer type
+            noise_floor = typemax(T) ÷ 0xA
+        else
+            noise_floor = one(T)
+        end
+    end
+
     freqs = range(; start=f_high, stop=f_low, length=channels)
-    time = range(; start=0, step=t_step, length=samples)
+    time = range(; start=0, step=δt, length=samples)
 
-    t_start = start * t_step
+    t_start = start * δt
 
+    # Caclulate shifts
     shifts = @. Δt(DM, freqs', f_high)
-    dyn_spec = rand(dtype, samples, channels)
-    raw_pulse = @. gaussian(time, t_start + shifts, w * t_step) * A * (freqs' / f_high)^α
+
+    # Generate the raw pulse, these are floats at this point
+    raw_pulse = @. gaussian(time, t_start + shifts, w * δt) * A * noise_floor * (freqs' / f_high)^α
+
+    # Prep the dynamic spectrum with the background noise
+    dyn_spec = rand(zero(T):noise_floor, samples, channels)
+
+    # Add in the pulse
     if dtype <: Integer
         dyn_spec += round.(dtype,raw_pulse)
     else
         dyn_spec += raw_pulse
     end
 
-    return Filterbank(DimArray(dyn_spec, (Ti(time), Freq(freqs))), Dict("tsamp" => t_step))
+    # Build Filterbank
+    return Filterbank(DimArray(dyn_spec,
+                               (Ti(time),
+                                Freq(freqs))),
+                      Dict("tsamp" => δt,
+                           "nbits" => sizeof(dtype) * 8,
+                           "nsamples" => samples,
+                           "nchans" => channels,
+                           "fch1" => f_high,
+                           "foff" => step(freqs)))
 end
 
-function fake_pulse!(dyn_spec, DM, f_low, f_high;
-                     t_step=1e-3,
-                     w=8,
-                     A=2,
-                     α=4,
-                     start=nothing,
-                     dtype=Float32)
-    samples, channels = size(dyn_spec)
-
-    freqs = range(; start=f_high, stop=f_low, length=channels)
-    time = range(; start=0, step=t_step, length=samples)
-
-    if isnothing(start)
-        start = samples ÷ 2
-    end
-
-    t_start = start * t_step
-
-    shifts = @. Δt(DM, freqs', f_high)
-    dyn_spec .= rand(dtype, samples, channels)
-    return dyn_spec .+= @. gaussian(time, t_start + shifts, w * t_step) * A *
-                           (freqs' / f_high)^α
-end
-
-export fake_pulse, fake_pulse!
+export fake_pulse

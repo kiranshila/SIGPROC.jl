@@ -12,7 +12,7 @@ First, let's grab some filterbank data, we can find one from [Berkeley's SETI Re
 filename = download("https://github.com/UCBerkeleySETI/breakthrough/blob/master/GBT/filterbank_tutorial/blc04_guppi_57563_69862_HIP35136_0011.gpuspec.0002.fil?raw=true")
 ```
 
-Now, we can read it into a `Filterbank`. By default, it will read all the time samples, we can however supply `start` and `stop` arguments if we want to look at a limited chunk. This is usefull as these files can get quite large.
+Now, we can read it into a `Filterbank`. By default, it will read all the time samples, we can however supply `start` and `stop` arguments if we want to look at a limited chunk. This is useful as these files can get quite large.
 
 ```@example examples
 fb = Filterbank(filename)
@@ -24,7 +24,7 @@ The data is stored as a `DimArray` from the [DimensionalData](https://github.com
 fb.data
 ```
 
-Additionally, `DimArray`s have plot recipies that make visualization super easy. We can call [Plots.jl](https://github.com/JuliaPlots/Plots.jl)'s `heatmap` function to get a waterfall.
+Additionally, `DimArray`s have plot recipes that make visualization super easy. We can call [Plots.jl](https://github.com/JuliaPlots/Plots.jl)'s `heatmap` function to get a waterfall.
 
 ```@example examples
 using Plots
