@@ -1,4 +1,4 @@
-using IntervalSets, DimensionalData
+using DimensionalData
 
 @inline gaussian(t, t₀, w) = exp(-((t - t₀) / w)^2)
 
